@@ -114,8 +114,8 @@ void DDS::readStandardHeader(Common::SeekableReadStream &dds, DataType &dataType
 	// Detect which specific format it describes
 	detectFormat(format, dataType);
 
-	if (!hasValidDimensions(_formatRaw, width, height))
-		throw Common::Exception("Invalid dimensions (%dx%d) for format %d", width, height, _formatRaw);
+	if (!hasValidDimensions(_format, width, height))
+		throw Common::Exception("Invalid dimensions (%dx%d) for format %d", width, height, _format);
 
 	dds.skip(16 + 4); // DDCAPS2 + Reserved
 
@@ -160,14 +160,10 @@ void DDS::readBioWareHeader(Common::SeekableReadStream &dds, DataType &dataType)
 	uint32 bpp = dds.readUint32LE();
 	if      (bpp == 3) {
 		_hasAlpha  = false;
-		_format    = kPixelFormatBGR;
-		_formatRaw = kPixelFormatDXT1;
-		_dataType  = kPixelDataType8;
+		_format    = kPixelFormatDXT1;
 	} else if (bpp == 4) {
 		_hasAlpha  = true;
-		_format    = kPixelFormatBGRA;
-		_formatRaw = kPixelFormatDXT5;
-		_dataType  = kPixelDataType8;
+		_format    = kPixelFormatDXT5;
 	} else
 		throw Common::Exception("Unsupported bytes per pixel value (%d)", bpp);
 
@@ -177,8 +173,8 @@ void DDS::readBioWareHeader(Common::SeekableReadStream &dds, DataType &dataType)
 		  ((bpp == 4) && (dataSize != ((width * height)    ))))
 		throw Common::Exception("Invalid data size (%dx%dx%d %d)", width, height, bpp, dataSize);
 
-	if (!hasValidDimensions(_formatRaw, width, height))
-		throw Common::Exception("Invalid dimensions (%dx%d) for format %d", width, height, _formatRaw);
+	if (!hasValidDimensions(_format, width, height))
+		throw Common::Exception("Invalid dimensions (%dx%d) for format %d", width, height, _format);
 
 	dds.skip(4); // Some float
 
@@ -211,7 +207,7 @@ void DDS::readBioWareHeader(Common::SeekableReadStream &dds, DataType &dataType)
 void DDS::setSize(MipMap &mipMap) {
 	// Depending on the pixel format, set the image data size in bytes
 
-	mipMap.size = getDataSize(_formatRaw, mipMap.width, mipMap.height);
+	mipMap.size = getDataSize(_format, mipMap.width, mipMap.height);
 }
 
 void DDS::readData(Common::SeekableReadStream &dds, DataType dataType) {
@@ -245,39 +241,29 @@ void DDS::detectFormat(const DDSPixelFormat &format, DataType &dataType) {
 	if        ((format.flags & kPixelFlagsHasFourCC) && (format.fourCC == kDXT1ID)) {
 		_compressed = true;
 		_hasAlpha   = false;
-		_format     = kPixelFormatBGR;
-		_formatRaw  = kPixelFormatDXT1;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatDXT1;
 	} else if ((format.flags & kPixelFlagsHasFourCC) && (format.fourCC == kDXT3ID)) {
 		_compressed = true;
 		_hasAlpha   = true;
-		_format     = kPixelFormatBGRA;
-		_formatRaw  = kPixelFormatDXT3;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatDXT3;
 	} else if ((format.flags & kPixelFlagsHasFourCC) && (format.fourCC == kDXT5ID)) {
 		_compressed = true;
 		_hasAlpha   = true;
-		_format     = kPixelFormatBGRA;
-		_formatRaw  = kPixelFormatDXT5;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatDXT5;
 	} else if ((format.flags & kPixelFlagsIsRGB) && (format.flags & kPixelFlagsHasAlpha) &&
 	           (format.bitCount == 32) &&
 	           (format.rBitMask == 0x00FF0000) && (format.gBitMask == 0x0000FF00) &&
 	           (format.bBitMask == 0x000000FF) && (format.aBitMask == 0xFF000000)) {
 		_compressed = false;
 		_hasAlpha   = true;
-		_format     = kPixelFormatBGRA;
-		_formatRaw  = kPixelFormatRGBA8;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatB8G8R8A8;
 	} else if ((format.flags & kPixelFlagsIsRGB) && !(format.flags & kPixelFlagsHasAlpha) &&
 	           (format.bitCount == 24) &&
 	           (format.rBitMask == 0x00FF0000) && (format.gBitMask == 0x0000FF00) &&
 	           (format.bBitMask == 0x000000FF)) {
 		_compressed = false;
 		_hasAlpha   = false;
-		_format     = kPixelFormatBGR;
-		_formatRaw  = kPixelFormatRGB8;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatB8G8R8;
 
 	} else if ((format.flags & kPixelFlagsIsRGB) && (format.flags & kPixelFlagsHasAlpha) &&
 	           (format.bitCount == 16) &&
@@ -285,9 +271,7 @@ void DDS::detectFormat(const DDSPixelFormat &format, DataType &dataType) {
 	           (format.bBitMask == 0x0000001F) && (format.aBitMask == 0x00008000)) {
 		_compressed = false;
 		_hasAlpha   = true;
-		_format     = kPixelFormatBGRA;
-		_formatRaw  = kPixelFormatRGB5A1;
-		_dataType   = kPixelDataType1555;
+		_format     = kPixelFormatA1R5G5B5;
 
 		warning("Found untested DDS RGB5A1 data");
 
@@ -297,9 +281,7 @@ void DDS::detectFormat(const DDSPixelFormat &format, DataType &dataType) {
 	           (format.bBitMask == 0x0000001F)) {
 		_compressed = false;
 		_hasAlpha   = false;
-		_format     = kPixelFormatBGR;
-		_formatRaw  = kPixelFormatRGB5;
-		_dataType   = kPixelDataType565;
+		_format     = kPixelFormatR5G6B5;
 
 		warning("Found untested DDS RGB5 data");
 
@@ -309,9 +291,7 @@ void DDS::detectFormat(const DDSPixelFormat &format, DataType &dataType) {
 	           (format.bBitMask == 0x0000000F) && (format.aBitMask == 0x0000F000)) {
 		_compressed = false;
 		_hasAlpha   = true;
-		_format     = kPixelFormatBGRA;
-		_formatRaw  = kPixelFormatRGBA8;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatB8G8R8A8;
 
 		dataType = kDataType4444;
 

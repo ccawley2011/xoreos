@@ -83,9 +83,7 @@ const byte *NBFS::readPalette(Common::SeekableReadStream &nbfp) {
 void NBFS::readImage(Common::SeekableReadStream &nbfs, const byte *palette,
                      uint32 width, uint32 height) {
 
-	_format    = kPixelFormatBGRA;
-	_formatRaw = kPixelFormatRGBA8;
-	_dataType  = kPixelDataType8;
+	_format = kPixelFormatB8G8R8A8;
 
 	_mipMaps.push_back(new MipMap);
 

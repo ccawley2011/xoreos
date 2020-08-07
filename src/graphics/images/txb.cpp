@@ -63,7 +63,7 @@ void TXB::load(Common::SeekableReadStream &txb) {
 	}
 }
 
-static uint32 getTXBDataSize(byte encoding, PixelFormatRaw format, int32 width, int32 height) {
+static uint32 getTXBDataSize(byte encoding, PixelFormat format, int32 width, int32 height) {
 	switch (encoding) {
 		case kEncodingBGRA:
 		case kEncodingDXT1:
@@ -105,45 +105,37 @@ void TXB::readHeader(Common::SeekableReadStream &txb, byte &encoding, uint32 &da
 
 		_compressed = false;
 		_hasAlpha   = true;
-		_format     = kPixelFormatBGRA;
-		_formatRaw  = kPixelFormatRGBA8;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatB8G8R8A8;
 
 	} else if (encoding == kEncodingGray) {
 		// Raw Grayscale, swizzled. We map it to BGR
 
 		_compressed = false;
 		_hasAlpha   = false;
-		_format     = kPixelFormatBGR;
-		_formatRaw  = kPixelFormatRGB8;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatB8G8R8;
 
 	} else if (encoding == kEncodingDXT1) {
 		// S3TC DXT1
 
 		_compressed = true;
 		_hasAlpha   = false;
-		_format     = kPixelFormatBGR;
-		_formatRaw  = kPixelFormatDXT1;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatDXT1;
 
 	} else if (encoding == kEncodingDXT5) {
 		// S3TC DXT5
 
 		_compressed = true;
 		_hasAlpha   = true;
-		_format     = kPixelFormatBGRA;
-		_formatRaw  = kPixelFormatDXT5;
-		_dataType   = kPixelDataType8;
+		_format     = kPixelFormatDXT5;
 
 	} else
 		throw Common::Exception("Unknown TXB encoding 0x%02X (%dx%d, %d, %d)",
 				encoding, width, height, mipMapCount, dataSize);
 
-	if (!hasValidDimensions(_formatRaw, width, height))
-		throw Common::Exception("Invalid dimensions (%dx%d) for format %d", width, height, _formatRaw);
+	if (!hasValidDimensions(_format, width, height))
+		throw Common::Exception("Invalid dimensions (%dx%d) for format %d", width, height, _format);
 
-	const size_t fullImageDataSize = getTXBDataSize(encoding, _formatRaw, width, height);
+	const size_t fullImageDataSize = getTXBDataSize(encoding, _format, width, height);
 	if (dataSize < fullImageDataSize)
 		throw Common::Exception("Image wouldn't fit into data");
 
@@ -153,7 +145,7 @@ void TXB::readHeader(Common::SeekableReadStream &txb, byte &encoding, uint32 &da
 
 		mipMap->width  = width;
 		mipMap->height = height;
-		mipMap->size   = getTXBDataSize(encoding, _formatRaw, width, height);
+		mipMap->size   = getTXBDataSize(encoding, _format, width, height);
 
 		_mipMaps.push_back(mipMap.release());
 

@@ -69,22 +69,22 @@ void ImageDecoder::MipMap::getPixel(int n, float &r, float &g, float &b, float &
 	assert(n < (int)size);
 	assert(image);
 
-	if        (image->getFormat() == kPixelFormatRGB) {
+	if        (image->getFormat() == kPixelFormatR8G8B8) {
 		r = data[n * 3 + 0] / 255.0f;
 		g = data[n * 3 + 1] / 255.0f;
 		b = data[n * 3 + 2] / 255.0f;
 		a = 1.0f;
-	} else if (image->getFormat() == kPixelFormatBGR) {
+	} else if (image->getFormat() == kPixelFormatB8G8R8) {
 		r = data[n * 3 + 2] / 255.0f;
 		g = data[n * 3 + 1] / 255.0f;
 		b = data[n * 3 + 0] / 255.0f;
 		a = 1.0f;
-	} else if (image->getFormat() == kPixelFormatRGBA) {
+	} else if (image->getFormat() == kPixelFormatR8G8B8A8) {
 		r = data[n * 4 + 0] / 255.0f;
 		g = data[n * 4 + 1] / 255.0f;
 		b = data[n * 4 + 2] / 255.0f;
 		a = data[n * 4 + 3] / 255.0f;
-	} else if (image->getFormat() == kPixelFormatBGRA) {
+	} else if (image->getFormat() == kPixelFormatB8G8R8A8) {
 		r = data[n * 4 + 2] / 255.0f;
 		g = data[n * 4 + 1] / 255.0f;
 		b = data[n * 4 + 0] / 255.0f;
@@ -102,20 +102,20 @@ void ImageDecoder::MipMap::setPixel(int n, float r, float g, float b, float a) {
 	assert(n < (int)size);
 	assert(image);
 
-	if        (image->getFormat() == kPixelFormatRGB) {
+	if        (image->getFormat() == kPixelFormatR8G8B8) {
 		data[n * 3 + 0] = CLIP(r, 0.0f, 1.0f) * 255.0f;
 		data[n * 3 + 1] = CLIP(g, 0.0f, 1.0f) * 255.0f;
 		data[n * 3 + 2] = CLIP(b, 0.0f, 1.0f) * 255.0f;
-	} else if (image->getFormat() == kPixelFormatBGR) {
+	} else if (image->getFormat() == kPixelFormatB8G8R8) {
 		data[n * 3 + 2] = CLIP(r, 0.0f, 1.0f) * 255.0f;
 		data[n * 3 + 1] = CLIP(g, 0.0f, 1.0f) * 255.0f;
 		data[n * 3 + 0] = CLIP(b, 0.0f, 1.0f) * 255.0f;
-	} else if (image->getFormat() == kPixelFormatRGBA) {
+	} else if (image->getFormat() == kPixelFormatR8G8B8A8) {
 		data[n * 4 + 0] = CLIP(r, 0.0f, 1.0f) * 255.0f;
 		data[n * 4 + 1] = CLIP(g, 0.0f, 1.0f) * 255.0f;
 		data[n * 4 + 2] = CLIP(b, 0.0f, 1.0f) * 255.0f;
 		data[n * 4 + 3] = CLIP(a, 0.0f, 1.0f) * 255.0f;
-	} else if (image->getFormat() == kPixelFormatBGRA) {
+	} else if (image->getFormat() == kPixelFormatB8G8R8A8) {
 		data[n * 4 + 2] = CLIP(r, 0.0f, 1.0f) * 255.0f;
 		data[n * 4 + 1] = CLIP(g, 0.0f, 1.0f) * 255.0f;
 		data[n * 4 + 0] = CLIP(b, 0.0f, 1.0f) * 255.0f;
@@ -127,8 +127,7 @@ void ImageDecoder::MipMap::setPixel(int n, float r, float g, float b, float a) {
 
 
 ImageDecoder::ImageDecoder() : _compressed(false), _hasAlpha(false),
-	_format(kPixelFormatBGRA), _formatRaw(kPixelFormatRGBA8), _dataType(kPixelDataType8),
-	_layerCount(1), _isCubeMap(false) {
+	_format(kPixelFormatR8G8B8A8), _layerCount(1), _isCubeMap(false) {
 
 }
 
@@ -143,9 +142,7 @@ ImageDecoder &ImageDecoder::operator=(const ImageDecoder &image) {
 	_compressed = image._compressed;
 	_hasAlpha   = image._hasAlpha;
 
-	_format    = image._format;
-	_formatRaw = image._formatRaw;
-	_dataType  = image._dataType;
+	_format     = image._format;
 
 	_layerCount = image._layerCount;
 	_isCubeMap  = image._isCubeMap;
@@ -177,14 +174,6 @@ PixelFormat ImageDecoder::getFormat() const {
 	return _format;
 }
 
-PixelFormatRaw ImageDecoder::getFormatRaw() const {
-	return _formatRaw;
-}
-
-PixelDataType ImageDecoder::getDataType() const {
-	return _dataType;
-}
-
 size_t ImageDecoder::getMipMapCount() const {
 	assert((_mipMaps.size() % _layerCount) == 0);
 
@@ -212,7 +201,7 @@ const ImageDecoder::MipMap &ImageDecoder::getMipMap(size_t mipMap, size_t layer)
 	return *_mipMaps[index];
 }
 
-void ImageDecoder::decompress(MipMap &out, const MipMap &in, PixelFormatRaw format) {
+void ImageDecoder::decompress(MipMap &out, const MipMap &in, PixelFormat format) {
 	if ((format != kPixelFormatDXT1) &&
 	    (format != kPixelFormatDXT3) &&
 	    (format != kPixelFormatDXT5))
@@ -246,14 +235,12 @@ void ImageDecoder::decompress() {
 	for (MipMaps::iterator m = _mipMaps.begin(); m != _mipMaps.end(); ++m) {
 		MipMap decompressed(this);
 
-		decompress(decompressed, **m, _formatRaw);
+		decompress(decompressed, **m, _format);
 
 		decompressed.swap(**m);
 	}
 
-	_format     = kPixelFormatRGBA;
-	_formatRaw  = kPixelFormatRGBA8;
-	_dataType   = kPixelDataType8;
+	_format     = kPixelFormatR8G8B8A8;
 	_compressed = false;
 }
 

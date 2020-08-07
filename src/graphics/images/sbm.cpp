@@ -36,9 +36,7 @@ namespace Graphics {
 SBM::SBM(Common::SeekableReadStream &sbm, bool deswizzle) {
 	_compressed = false;
 	_hasAlpha   = true;
-	_format     = kPixelFormatBGRA;
-	_formatRaw  = kPixelFormatRGBA8;
-	_dataType   = kPixelDataType8;
+	_format     = kPixelFormatB8G8R8A8;
 
 	load(sbm, deswizzle);
 }

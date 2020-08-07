@@ -86,12 +86,8 @@ public:
 	/** Does the image data have alpha? .*/
 	bool hasAlpha() const;
 
-	/** Return the image data's general format. */
-	PixelFormat    getFormat() const;
 	/** Return the image data's raw format. */
-	PixelFormatRaw getFormatRaw() const;
-	/** Return the image data pixel's type. */
-	PixelDataType  getDataType() const;
+	PixelFormat getFormat() const;
 
 	/** Return the number of mip maps contained in the image. */
 	size_t getMipMapCount() const;
@@ -119,9 +115,7 @@ protected:
 	bool _compressed;
 	bool _hasAlpha;
 
-	PixelFormat    _format;
-	PixelFormatRaw _formatRaw;
-	PixelDataType  _dataType;
+	PixelFormat _format;
 
 	/** Number of layers in this image. For layered 3D images and cubemaps. */
 	size_t _layerCount;
@@ -132,7 +126,7 @@ protected:
 
 	TXI _txi;
 
-	static void decompress(MipMap &out, const MipMap &in, PixelFormatRaw format);
+	static void decompress(MipMap &out, const MipMap &in, PixelFormat format);
 };
 
 } // End of namespace Graphics

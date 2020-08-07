@@ -180,20 +180,22 @@ void Texture::setAlign() {
 
 	int alignment = 1;
 
-	switch (_image->getFormatRaw()) {
+	switch (_image->getFormat()) {
 		// 4 byte per texel, so always neatly 4-byte aligned
-		case kPixelFormatRGBA8:
+		case kPixelFormatR8G8B8A8:
+		case kPixelFormatB8G8R8A8:
 			alignment = 4;
 			break;
 
 		// 2 byte per texel, so always neatly 2-byte aligned
-		case kPixelFormatRGB5A1:
-		case kPixelFormatRGB5:
+		case kPixelFormatA1R5G5B5:
+		case kPixelFormatR5G6B5:
 			alignment = 2;
 			break;
 
 		// All bets are off here
-		case kPixelFormatRGB8:
+		case kPixelFormatR8G8B8:
+		case kPixelFormatB8G8R8:
 			alignment = 1;
 			break;
 
@@ -241,15 +243,70 @@ void Texture::setMipMaps(GLenum target) {
 	}
 }
 
+bool Texture::convertPixelFormat(PixelFormat in, int& format, int& formatRaw, int& dataType) {
+	switch (in) {
+	case kPixelFormatR8G8B8:
+		format = GL_RGB;
+		formatRaw = GL_RGB8;
+		dataType = GL_UNSIGNED_BYTE;
+		return true;
+	case kPixelFormatR8G8B8A8:
+		format = GL_RGBA;
+		formatRaw = GL_RGBA8;
+		dataType = GL_UNSIGNED_BYTE;
+		return true;
+	case kPixelFormatB8G8R8:
+		format = GL_BGR;
+		formatRaw = GL_RGB8;
+		dataType = GL_UNSIGNED_BYTE;
+		return true;
+	case kPixelFormatB8G8R8A8:
+		format = GL_BGRA;
+		formatRaw = GL_RGBA8;
+		dataType = GL_UNSIGNED_BYTE;
+		return true;
+	case kPixelFormatA1R5G5B5:
+		format = GL_BGRA;
+		formatRaw = GL_RGB5_A1;
+		dataType = GL_UNSIGNED_SHORT_1_5_5_5_REV;
+		return true;
+	case kPixelFormatR5G6B5:
+		format = GL_BGR;
+		formatRaw = GL_RGB5;
+		dataType = GL_UNSIGNED_SHORT_5_6_5;
+		return true;
+	case kPixelFormatDXT1:
+		format = GL_BGR;
+		formatRaw = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+		dataType = GL_UNSIGNED_BYTE;
+		return true;
+	case kPixelFormatDXT3:
+		format = GL_BGRA;
+		formatRaw = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+		dataType = GL_UNSIGNED_BYTE;
+		return true;
+	case kPixelFormatDXT5:
+		format = GL_BGRA;
+		formatRaw = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+		dataType = GL_UNSIGNED_BYTE;
+		return true;
+	default:
+		return false;
+	}
+}
+
 void Texture::setMipMapData(GLenum target, size_t layer, size_t mipMap) {
 	const ImageDecoder::MipMap &m = _image->getMipMap(mipMap, layer);
+	int format, formatRaw, dataType;
+	if (!convertPixelFormat(_image->getFormat(), format, formatRaw, dataType))
+		return;
 
 	if (_image->isCompressed()) {
-		glCompressedTexImage2D(target, mipMap, _image->getFormatRaw(),
+		glCompressedTexImage2D(target, mipMap, formatRaw,
 		                       m.width, m.height, 0, m.size, m.data.get());
 	} else {
-		glTexImage2D(target, mipMap, _image->getFormatRaw(),
-		             m.width, m.height, 0, _image->getFormat(), _image->getDataType(), m.data.get());
+		glTexImage2D(target, mipMap, formatRaw,
+		             m.width, m.height, 0, format, dataType, m.data.get());
 	}
 }
 

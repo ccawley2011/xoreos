@@ -102,7 +102,7 @@ void TPC::readHeader(Common::SeekableReadStream &tpc, byte &encoding) {
 	}
 
 	uint32 minDataSize = getMinDataSize(isUncompressed, encoding);
-	_formatRaw = getPixelFormat(isUncompressed, encoding);
+	_format = getPixelFormat(isUncompressed, encoding);
 
 	// Calculate the complete data size for images with mipmaps
 	size_t completeDataSize = dataSize;
@@ -114,7 +114,7 @@ void TPC::readHeader(Common::SeekableReadStream &tpc, byte &encoding) {
 		w = MAX<uint32>(w, 1);
 		h = MAX<uint32>(h, 1);
 
-		completeDataSize += getDataSize(_formatRaw, w, h);
+		completeDataSize += getDataSize(_format, w, h);
 	}
 
 	completeDataSize *= _layerCount;
@@ -149,29 +149,21 @@ void TPC::readHeader(Common::SeekableReadStream &tpc, byte &encoding) {
 			// 8bpp grayscale
 
 			_hasAlpha   = false;
-			_format     = kPixelFormatRGB;
-			_dataType   = kPixelDataType8;
 
 		} else if (encoding == kEncodingRGB) {
 			// RGB, no alpha channel
 
 			_hasAlpha   = false;
-			_format     = kPixelFormatRGB;
-			_dataType   = kPixelDataType8;
 
 		} else if (encoding == kEncodingRGBA) {
 			// RGBA, alpha channel
 
 			_hasAlpha   = true;
-			_format     = kPixelFormatRGBA;
-			_dataType   = kPixelDataType8;
 
 		} else if (encoding == kEncodingSwizzledBGRA) {
 			// BGRA, alpha channel, texture memory layout is "swizzled"
 
 			_hasAlpha   = true;
-			_format     = kPixelFormatBGRA;
-			_dataType   = kPixelDataType8;
 
 		} else
 			throw Common::Exception("Unknown TPC raw encoding: %d (%d), %dx%d, %d", encoding, dataSize, width, height, mipMapCount);
@@ -181,24 +173,20 @@ void TPC::readHeader(Common::SeekableReadStream &tpc, byte &encoding) {
 
 		_compressed = true;
 		_hasAlpha   = false;
-		_format     = kPixelFormatBGR;
-		_dataType   = kPixelDataType8;
 
 	} else if (encoding == kEncodingRGBA) {
 		// S3TC DXT5
 
 		_compressed = true;
 		_hasAlpha   = true;
-		_format     = kPixelFormatBGRA;
-		_dataType   = kPixelDataType8;
 
 	} else
 		throw Common::Exception("Unknown TPC encoding: %d (%d)", encoding, dataSize);
 
-	if (!hasValidDimensions(_formatRaw, width, height))
-		throw Common::Exception("Invalid dimensions (%dx%d) for format %d", width, height, _formatRaw);
+	if (!hasValidDimensions(_format, width, height))
+		throw Common::Exception("Invalid dimensions (%dx%d) for format %d", width, height, _format);
 
-	const size_t fullImageDataSize = getDataSize(_formatRaw, width, height);
+	const size_t fullImageDataSize = getDataSize(_format, width, height);
 
 	size_t fullDataSize = tpc.size() - 128;
 	if (fullDataSize < (_layerCount * fullImageDataSize))
@@ -213,7 +201,7 @@ void TPC::readHeader(Common::SeekableReadStream &tpc, byte &encoding) {
 		uint32 layerSize;
 
 		if (_isAnimated)
-			layerSize = getDataSize(_formatRaw, layerWidth, layerHeight);
+			layerSize = getDataSize(_format, layerWidth, layerHeight);
 		else
 			layerSize = dataSize;
 
@@ -225,7 +213,7 @@ void TPC::readHeader(Common::SeekableReadStream &tpc, byte &encoding) {
 
 			mipMap->size = MAX<uint32>(layerSize, minDataSize);
 
-			const size_t mipMapDataSize = getDataSize(_formatRaw, mipMap->width, mipMap->height);
+			const size_t mipMapDataSize = getDataSize(_format, mipMap->width, mipMap->height);
 
 			// Wouldn't fit
 			if ((fullDataSize < mipMap->size) || (mipMap->size < mipMapDataSize))
@@ -237,7 +225,7 @@ void TPC::readHeader(Common::SeekableReadStream &tpc, byte &encoding) {
 
 			layerWidth  >>= 1;
 			layerHeight >>= 1;
-			layerSize = getDataSize(_formatRaw, layerWidth, layerHeight);
+			layerSize = getDataSize(_format, layerWidth, layerHeight);
 
 			if ((layerWidth < 1) && (layerHeight < 1))
 				break;
@@ -394,15 +382,16 @@ uint32 TPC::getMinDataSize(bool uncompressed, byte encoding) {
 	throw Common::Exception("Unknown TPC encoding: %d", encoding);
 }
 
-PixelFormatRaw TPC::getPixelFormat(bool uncompressed, byte encoding) {
+PixelFormat TPC::getPixelFormat(bool uncompressed, byte encoding) {
 	if (uncompressed) {
 		switch (encoding) {
 			case kEncodingGray:
 			case kEncodingRGB:
-				return kPixelFormatRGB8;
+				return kPixelFormatR8G8B8;
 			case kEncodingRGBA:
+				return kPixelFormatR8G8B8A8;
 			case kEncodingSwizzledBGRA:
-				return kPixelFormatRGBA8;
+				return kPixelFormatB8G8R8A8;
 		}
 	} else {
 		switch (encoding) {
@@ -460,7 +449,7 @@ void TPC::fixupCubeMap() {
 		mipMap0.data.swap(mipMap1.data);
 	}
 
-	const int bpp = (_formatRaw == kPixelFormatRGB8) ? 3 : ((_formatRaw == kPixelFormatRGBA8) ? 4 : 0);
+	const int bpp = (_format == kPixelFormatR8G8B8) ? 3 : ((_format == kPixelFormatR8G8B8A8 || _format == kPixelFormatB8G8R8A8) ? 4 : 0);
 	if (bpp == 0)
 		return;
 

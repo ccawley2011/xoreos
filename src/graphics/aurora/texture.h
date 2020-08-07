@@ -120,6 +120,7 @@ protected:
 	void setFilter(GLenum target);
 	void setMipMaps(GLenum target);
 	void setMipMapData(GLenum target, size_t layer, size_t mipMap);
+	bool convertPixelFormat(PixelFormat in, int& format, int& formatRaw, int& dataType);
 
 	static TXI *loadTXI(const Common::UString &name);
 	static ImageDecoder *loadImage(Common::SeekableReadStream *imageStream, ::Aurora::FileType type,

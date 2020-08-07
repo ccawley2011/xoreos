@@ -251,9 +251,7 @@ void NCGR::draw(ReadContext &ctx) {
 	if ((imageWidth >= 0x8000) || (imageHeight >= 0x8000))
 		throw Common::Exception("Unsupported full image dimensions");
 
-	_format    = kPixelFormatBGRA;
-	_formatRaw = kPixelFormatRGBA8;
-	_dataType  = kPixelDataType8;
+	_format = kPixelFormatB8G8R8A8;
 
 	_mipMaps.push_back(new MipMap);
 

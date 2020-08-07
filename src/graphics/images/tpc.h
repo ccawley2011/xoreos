@@ -54,7 +54,7 @@ private:
 	void readTXI(Common::SeekableReadStream &tpc);
 
 	uint32 getMinDataSize(bool uncompressed, byte encoding);
-	PixelFormatRaw getPixelFormat(bool uncompressed, byte encoding);
+	PixelFormat getPixelFormat(bool uncompressed, byte encoding);
 
 	bool checkCubeMap(uint32 &width, uint32 &height);
 	bool checkAnimated(uint32 &width, uint32 &height, uint32 &dataSize);

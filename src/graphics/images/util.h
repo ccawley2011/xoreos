@@ -40,19 +40,21 @@ namespace Graphics {
 
 /** Return the number of bytes necessary to hold an image of these dimensions
   * and in this format. */
-static inline uint32 getDataSize(PixelFormatRaw format, int32 width, int32 height) {
+static inline uint32 getDataSize(PixelFormat format, int32 width, int32 height) {
 	if ((width < 0) || (width >= 0x8000) || (height < 0) || (height >= 0x8000))
 		throw Common::Exception("Invalid dimensions %dx%d", width, height);
 
 	switch (format) {
-		case kPixelFormatRGB8:
+		case kPixelFormatR8G8B8:
+		case kPixelFormatB8G8R8:
 			return width * height * 3;
 
-		case kPixelFormatRGBA8:
+		case kPixelFormatR8G8B8A8:
+		case kPixelFormatB8G8R8A8:
 			return width * height * 4;
 
-		case kPixelFormatRGB5A1:
-		case kPixelFormatRGB5:
+		case kPixelFormatA1R5G5B5:
+		case kPixelFormatR5G6B5:
 			return width * height * 2;
 
 		case kPixelFormatDXT1:
@@ -70,23 +72,12 @@ static inline uint32 getDataSize(PixelFormatRaw format, int32 width, int32 heigh
 }
 
 /** Are these image dimensions valid for this format? */
-static inline bool hasValidDimensions(PixelFormatRaw format, int32 width, int32 height) {
+static inline bool hasValidDimensions(PixelFormat format, int32 width, int32 height) {
 	if ((width < 0) || (width >= 0x8000) || (height < 0) || (height >= 0x8000))
 		return false;
 
-	switch (format) {
-		case kPixelFormatRGB8:
-		case kPixelFormatRGBA8:
-		case kPixelFormatRGB5A1:
-		case kPixelFormatRGB5:
-		case kPixelFormatDXT1:
-		case kPixelFormatDXT3:
-		case kPixelFormatDXT5:
-			return true;
-
-		default:
-			break;
-	}
+	if (format > kPixelFormatUnknown && format < kPixelFormatMAX)
+		return true;
 
 	return false;
 }

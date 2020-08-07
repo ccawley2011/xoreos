@@ -891,7 +891,7 @@ void ModelNode_DragonAge::fixTexturesAlpha(const std::vector<Common::UString> &t
 			if (image->isCompressed())
 				image->decompress();
 
-			if (image->getFormatRaw() != kPixelFormatRGBA8)
+			if (image->getFormat() != kPixelFormatR8G8B8A8 && image->getFormat() != kPixelFormatB8G8R8A8)
 				throw 0;
 
 			for (size_t m = 0; m < image->getMipMapCount(); m++) {
@@ -931,7 +931,7 @@ void ModelNode_DragonAge::fixTexturesHair(const std::vector<Common::UString> &te
 			if (image->isCompressed())
 				image->decompress();
 
-			if (image->getFormatRaw() != kPixelFormatRGBA8)
+			if (image->getFormat() != kPixelFormatR8G8B8A8 && image->getFormat() != kPixelFormatB8G8R8A8)
 				throw 0;
 
 			for (size_t m = 0; m < image->getMipMapCount(); m++) {

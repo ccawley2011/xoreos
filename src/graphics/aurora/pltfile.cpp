@@ -183,7 +183,7 @@ ImageDecoder *PLTFile::getLayerPalette(uint32 layer, uint8 row) {
 	// TODO: We may want to cache these somehow...
 	Common::ScopedPtr<ImageDecoder> palette(loadImage(kPalettes[layer]));
 
-	if (palette->getFormat() != kPixelFormatBGRA)
+	if (palette->getFormat() != kPixelFormatB8G8R8A8)
 		throw Common::Exception("Invalid format (%d)", palette->getFormat());
 
 	if (palette->getMipMapCount() < 1)

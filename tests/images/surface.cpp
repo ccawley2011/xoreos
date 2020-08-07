@@ -92,9 +92,7 @@ GTEST_TEST(Surface, hasAlpha) {
 GTEST_TEST(Surface, getFormat) {
 	const Graphics::Surface surface(4, 4);
 
-	EXPECT_EQ(surface.getFormat()   , Graphics::kPixelFormatBGRA);
-	EXPECT_EQ(surface.getFormatRaw(), Graphics::kPixelFormatRGBA8);
-	EXPECT_EQ(surface.getDataType() , Graphics::kPixelDataType8);
+	EXPECT_EQ(surface.getFormat(), Graphics::kPixelFormatB8G8R8A8);
 }
 
 GTEST_TEST(Surface, getMipMapCount) {

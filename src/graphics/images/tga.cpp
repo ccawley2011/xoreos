@@ -142,21 +142,15 @@ void TGA::readHeader(Common::SeekableReadStream &tga, ImageType &imageType, byte
 	if (imageType == kImageTypeTrueColor || imageType == kImageTypeRLETrueColor) {
 		if (pixelDepth == 24) {
 			_hasAlpha  = false;
-			_format    = kPixelFormatBGR;
-			_formatRaw = kPixelFormatRGB8;
-			_dataType  = kPixelDataType8;
+			_format = kPixelFormatB8G8R8;
 		} else if (pixelDepth == 16 || pixelDepth == 32) {
 			_hasAlpha  = true;
-			_format    = kPixelFormatBGRA;
-			_formatRaw = kPixelFormatRGBA8;
-			_dataType  = kPixelDataType8;
+			_format = kPixelFormatB8G8R8A8;
 		} else if (pixelDepth == 8) {
 			imageType = kImageTypeBW;
 
 			_hasAlpha  = false;
-			_format    = kPixelFormatBGRA;
-			_formatRaw = kPixelFormatRGBA8;
-			_dataType  = kPixelDataType8;
+			_format = kPixelFormatB8G8R8A8;
 		} else
 			throw Common::Exception("Unsupported pixel depth: %d, %d", imageType, pixelDepth);
 	} else if (imageType == kImageTypeBW) {
@@ -164,9 +158,7 @@ void TGA::readHeader(Common::SeekableReadStream &tga, ImageType &imageType, byte
 			throw Common::Exception("Unsupported pixel depth: %d, %d", imageType, pixelDepth);
 
 		_hasAlpha  = false;
-		_format    = kPixelFormatBGRA;
-		_formatRaw = kPixelFormatRGBA8;
-		_dataType  = kPixelDataType8;
+		_format = kPixelFormatB8G8R8A8;
 	}
 
 	// Image descriptor
@@ -180,9 +172,9 @@ void TGA::readData(Common::SeekableReadStream &tga, ImageType imageType, byte pi
 	for (size_t i = 0; i < _layerCount; i++) {
 		if (imageType == kImageTypeTrueColor || imageType == kImageTypeRLETrueColor) {
 			_mipMaps[i]->size = _mipMaps[i]->width * _mipMaps[i]->height;
-			if      (_format == kPixelFormatBGR)
+			if (_format == kPixelFormatB8G8R8)
 				_mipMaps[i]->size *= 3;
-			else if (_format == kPixelFormatBGRA)
+			else if (_format == kPixelFormatB8G8R8A8)
 				_mipMaps[i]->size *= 4;
 
 			_mipMaps[i]->data.reset(new byte[_mipMaps[i]->size]);

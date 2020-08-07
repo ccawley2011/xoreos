@@ -59,13 +59,13 @@ static const byte kImage3_2_4[] = { 0x00,0x01,0x02,0x03, 0x04,0x05,0x06,0x07, 0x
 
 
 GTEST_TEST(ImagesUtil, getDataSize) {
-	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatRGB5A1, 3, 3), 3 * 3 * 2);
-	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatRGB8  , 3, 3), 3 * 3 * 3);
-	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatRGBA8 , 3, 3), 3 * 3 * 4);
+	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatA1R5G5B5, 3, 3), 3 * 3 * 2);
+	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatR8G8B8  , 3, 3), 3 * 3 * 3);
+	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatR8G8B8A8, 3, 3), 3 * 3 * 4);
 
-	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatRGB5A1, 0, 0), 0);
-	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatRGB8  , 0, 0), 0);
-	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatRGBA8 , 0, 0), 0);
+	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatA1R5G5B5, 0, 0), 0);
+	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatR8G8B8  , 0, 0), 0);
+	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatR8G8B8A8, 0, 0), 0);
 
 	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatDXT1, 0, 0),  8);
 	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatDXT3, 0, 0), 16);
@@ -83,61 +83,71 @@ GTEST_TEST(ImagesUtil, getDataSize) {
 	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatDXT3, 16, 16), 256);
 	EXPECT_EQ(Graphics::getDataSize(Graphics::kPixelFormatDXT5, 16, 16), 256);
 
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatRGB5A1, -1, -1), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatRGB8  , -1, -1), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatRGBA8 , -1, -1), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT1  , -1, -1), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT3  , -1, -1), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT5  , -1, -1), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatA1R5G5B5, -1, -1), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatR8G8B8  , -1, -1), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatR8G8B8A8, -1, -1), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT1    , -1, -1), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT3    , -1, -1), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT5    , -1, -1), Common::Exception);
 
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatRGB5A1, 0x8000, 0x8000), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatRGB8  , 0x8000, 0x8000), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatRGBA8 , 0x8000, 0x8000), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT1  , 0x8000, 0x8000), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT3  , 0x8000, 0x8000), Common::Exception);
-	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT5  , 0x8000, 0x8000), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatA1R5G5B5, 0x8000, 0x8000), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatR8G8B8  , 0x8000, 0x8000), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatR8G8B8A8, 0x8000, 0x8000), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT1    , 0x8000, 0x8000), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT3    , 0x8000, 0x8000), Common::Exception);
+	EXPECT_THROW(Graphics::getDataSize(Graphics::kPixelFormatDXT5    , 0x8000, 0x8000), Common::Exception);
 }
 
 GTEST_TEST(ImagesUtil, hasValidDimensions) {
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB8  , 0, 0));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGBA8 , 0, 0));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5A1, 0, 0));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5  , 0, 0));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1  , 0, 0));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3  , 0, 0));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5  , 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8  , 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8A8, 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8  , 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8A8, 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatA1R5G5B5, 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR5G6B5  , 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1    , 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3    , 0, 0));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5    , 0, 0));
 
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB8  , 3, 3));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGBA8 , 3, 3));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5A1, 3, 3));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5  , 3, 3));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1  , 3, 3));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3  , 3, 3));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5  , 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8  , 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8A8, 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8  , 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8A8, 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatA1R5G5B5, 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR5G6B5  , 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1    , 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3    , 3, 3));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5    , 3, 3));
 
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB8  , 4, 4));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGBA8 , 4, 4));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5A1, 4, 4));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5  , 4, 4));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1  , 4, 4));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3  , 4, 4));
-	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5  , 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8  , 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8A8, 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8  , 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8A8, 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatA1R5G5B5, 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatR5G6B5  , 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1    , 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3    , 4, 4));
+	EXPECT_TRUE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5    , 4, 4));
 
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB8  , -1, -1));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGBA8 , -1, -1));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5A1, -1, -1));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5  , -1, -1));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1  , -1, -1));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3  , -1, -1));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5  , -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8  , -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8A8, -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8  , -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8A8, -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatA1R5G5B5, -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatR5G6B5  , -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1    , -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3    , -1, -1));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5    , -1, -1));
 
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB8  , 0x8000, 0x8000));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGBA8 , 0x8000, 0x8000));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5A1, 0x8000, 0x8000));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatRGB5  , 0x8000, 0x8000));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1  , 0x8000, 0x8000));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3  , 0x8000, 0x8000));
-	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5  , 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8  , 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatR8G8B8A8, 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8  , 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatB8G8R8A8, 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatA1R5G5B5, 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatR5G6B5  , 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT1    , 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT3    , 0x8000, 0x8000));
+	EXPECT_FALSE(Graphics::hasValidDimensions(Graphics::kPixelFormatDXT5    , 0x8000, 0x8000));
 }
 
 template<size_t N>

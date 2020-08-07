@@ -65,9 +65,7 @@ GTEST_TEST(XEOSITEX_3, getFormat) {
 	Common::MemoryReadStream stream(kXEOSITEX_3);
 	const Graphics::XEOSITEX image(stream);
 
-	EXPECT_EQ(image.getFormat()   , Graphics::kPixelFormatBGR);
-	EXPECT_EQ(image.getFormatRaw(), Graphics::kPixelFormatRGB8);
-	EXPECT_EQ(image.getDataType() , Graphics::kPixelDataType8);
+	EXPECT_EQ(image.getFormat(), Graphics::kPixelFormatB8G8R8);
 }
 
 GTEST_TEST(XEOSITEX_3, getMipMapCount) {
@@ -172,9 +170,7 @@ GTEST_TEST(XEOSITEX_4, getFormat) {
 	Common::MemoryReadStream stream(kXEOSITEX_4);
 	const Graphics::XEOSITEX image(stream);
 
-	EXPECT_EQ(image.getFormat()   , Graphics::kPixelFormatBGRA);
-	EXPECT_EQ(image.getFormatRaw(), Graphics::kPixelFormatRGBA8);
-	EXPECT_EQ(image.getDataType() , Graphics::kPixelDataType8);
+	EXPECT_EQ(image.getFormat(), Graphics::kPixelFormatB8G8R8A8);
 }
 
 GTEST_TEST(XEOSITEX_4, getMipMapCount) {

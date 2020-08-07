@@ -34,7 +34,6 @@ namespace Graphics {
 WinIconImage::WinIconImage(Common::SeekableReadStream &cur) : _hotspotX(0), _hotspotY(0) {
 	_compressed = false;
 	_hasAlpha   = true;
-	_dataType   = kPixelDataType8;
 
 	load(cur);
 }
@@ -140,8 +139,7 @@ void WinIconImage::readData(Common::SeekableReadStream &cur) {
 	if (cur.read(andMap.get(), andWidth * height) != (andWidth * height))
 		throw Common::Exception(Common::kReadError);
 
-	_format    = kPixelFormatBGRA;
-	_formatRaw = kPixelFormatRGBA8;
+	_format = kPixelFormatB8G8R8A8;
 
 	_mipMaps.push_back(new MipMap(this));
 

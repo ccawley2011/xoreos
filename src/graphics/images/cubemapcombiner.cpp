@@ -47,9 +47,7 @@ CubeMapCombiner::CubeMapCombiner(ImageDecoder *(&sides)[6]) {
 	_compressed = sides[0]->isCompressed();
 	_hasAlpha   = sides[0]->hasAlpha();
 
-	_format    = sides[0]->getFormat();
-	_formatRaw = sides[0]->getFormatRaw();
-	_dataType  = sides[0]->getDataType();
+	_format = sides[0]->getFormat();
 
 	const int32 width  = sides[0]->getMipMap(0).width;
 	const int32 height = sides[0]->getMipMap(0).height;
@@ -71,15 +69,11 @@ CubeMapCombiner::CubeMapCombiner(ImageDecoder *(&sides)[6]) {
 
 		if ((_compressed != sides[i]->isCompressed()) ||
 		    (_hasAlpha   != sides[i]->hasAlpha    ()) ||
-		    (_format     != sides[i]->getFormat   ()) ||
-		    (_formatRaw  != sides[i]->getFormatRaw()) ||
-		    (_dataType   != sides[i]->getDataType ()))
-			throw Common::Exception("CubeMapCombiner: Format mismatch (%u, %u, %u, %u, %u != %u, %u, %u, %u, %u)",
+		    (_format     != sides[i]->getFormat()))
+			throw Common::Exception("CubeMapCombiner: Format mismatch (%u, %u, %u, != %u, %u, %u)",
 			                        (uint) _compressed, (uint) _hasAlpha, (uint) _format,
-			                        (uint) _formatRaw, (uint) _dataType,
 			                        (uint) sides[i]->isCompressed(), (uint) sides[i]->hasAlpha(),
-			                        (uint) sides[i]->getFormat(), (uint) sides[i]->getFormatRaw(),
-			                        (uint) sides[i]->getDataType());
+			                        (uint) sides[i]->getFormat());
 	}
 
 	_txi = sides[0]->getTXI();

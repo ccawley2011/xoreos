@@ -212,9 +212,7 @@ void CBGT::checkConsistency(ReadContext &ctx) {
 }
 
 void CBGT::createImage(uint32 width, uint32 height) {
-	_format    = kPixelFormatBGRA;
-	_formatRaw = kPixelFormatRGBA8;
-	_dataType  = kPixelDataType8;
+	_format = kPixelFormatB8G8R8A8;
 
 	_mipMaps.push_back(new MipMap);
 	_mipMaps.back()->width  = width;
